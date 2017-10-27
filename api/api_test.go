@@ -45,8 +45,7 @@ func TestGetTimetable(t *testing.T) {
 		t.Fatalf("unexpected status code, code=%d, body=%s", res.StatusCode, string(body))
 	}
 
-	log.Printf("content-length = %d, content-encoding = %s",
-		len(body), res.Header.Get("Content-Encoding"))
+	log.Printf("content-length = %d", len(body))
 }
 
 func httpGet(path string, header http.Header) (*http.Response, error) {
