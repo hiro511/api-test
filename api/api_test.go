@@ -27,23 +27,6 @@ func BenchmarkTimetable(b *testing.B) {
 	}
 }
 
-func BenchmarkTimetableGzipEnabled(b *testing.B) {
-	ts := httptest.NewServer(http.HandlerFunc(getTimetable))
-	defer ts.Close()
-
-	config.SetGzipEnabled(true)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		res, err := http.Get(ts.URL + "/timetable")
-		if err != nil {
-			log.Fatal(err)
-		}
-		if res.StatusCode != http.StatusOK {
-			log.Fatalf("unexpected status code code=%d", res.StatusCode)
-		}
-	}
-}
-
 func TestGetTimetable(t *testing.T) {
 	config.SetDBBasePath("../")
 	ts := httptest.NewServer(http.HandlerFunc(getTimetable))
@@ -62,31 +45,8 @@ func TestGetTimetable(t *testing.T) {
 		t.Fatalf("unexpected status code, code=%d, body=%s", res.StatusCode, string(body))
 	}
 
-	log.Printf("content-length = %d, content-encoding = %s", len(body), res.Header.Get("Content-Encoding"))
-}
-
-func TestGetTimetableGzipEnabled(t *testing.T) {
-	config.SetDBBasePath("../")
-	ts := httptest.NewServer(http.HandlerFunc(getTimetable))
-	defer ts.Close()
-
-	res, err := httpGet(
-		ts.URL+"/timetable",
-		http.Header{"Accept-Encoding": []string{"gzip"}},
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		t.Fatalf("failed to read body")
-	}
-	if res.StatusCode != http.StatusOK {
-		t.Fatalf("unexpected status code, code=%d, body=%s", res.StatusCode, string(body))
-	}
-
-	log.Printf("content-length = %d, content-encoding = %s", len(body), res.Header.Get("Content-Encoding"))
+	log.Printf("content-length = %d, content-encoding = %s",
+		len(body), res.Header.Get("Content-Encoding"))
 }
 
 func httpGet(path string, header http.Header) (*http.Response, error) {

@@ -1,11 +1,8 @@
 package api
 
 import (
-	"compress/gzip"
 	"encoding/json"
-	"io"
 	"net/http"
-	"strings"
 
 	"github.com/hiro511/api-test/db"
 )
@@ -36,19 +33,9 @@ func getTimetable(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendResponse(w http.ResponseWriter, r *http.Request, v interface{}) {
-	var writer io.Writer
-	if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-		w.Header().Add("Content-Encoding", "gzip")
-		gzw := gzip.NewWriter(w)
-		defer gzw.Close()
-		writer = gzw
-	} else {
-		writer = w
-	}
-
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Add("content-type", "application/json")
-	err := json.NewEncoder(writer).Encode(v)
+	err := json.NewEncoder(w).Encode(v)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
