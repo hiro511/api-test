@@ -31,7 +31,6 @@ func getTimetable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Cache-Control", "public,max-age=100")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	sendResponse(w, r, timetable)
 }
@@ -47,6 +46,7 @@ func sendResponse(w http.ResponseWriter, r *http.Request, v interface{}) {
 		writer = w
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Add("content-type", "application/json")
 	err := json.NewEncoder(writer).Encode(v)
 	if err != nil {
