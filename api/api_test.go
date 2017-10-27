@@ -31,7 +31,6 @@ func BenchmarkTimetableGzipEnabled(b *testing.B) {
 	ts := httptest.NewServer(http.HandlerFunc(getTimetable))
 	defer ts.Close()
 
-	config.SetGzipEnabled(true)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		res, err := http.Get(ts.URL + "/timetable")
